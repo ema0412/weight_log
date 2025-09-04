@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WeightRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\WeightLog;
 use App\Models\WeightTarget;
 use Illuminate\Http\Request;
@@ -14,6 +15,20 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class WeightController extends Controller
 { 
 
+    public function weight()
+    {
+        return view('auth.weight');
+    }
+
+    public function storeWeight(RegisterRequest $request)
+    {
+        event(new Registered($user = $creator->create($request->all())));
+
+        $this->guard->login($user);
+
+        return redirect('/weight_logs');
+    }
+
     public function log()
     {
         $weight_logs = WeightLog::all();
@@ -24,6 +39,7 @@ class WeightController extends Controller
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => 'Page'
         ];
+        $latestWeight = WeightLog::latestN(1)->get();
 
         $weight_logs = new LengthAwarePaginator($pageData, $weight_logs->count(),$perPage,$page,$options);
 
@@ -42,12 +58,10 @@ class WeightController extends Controller
         }
         $query = WeightLog::query();
 
-        $query = $this->getSearchQuery($request, $query);
-
-        $WeightLogs = $query->paginate(7);
+        $WeightLogs = $query->paginate(8);
         $csvData = $query->get();
-        $weight_targets = WeightTarget::all();
-        return view('/weight_logs/search', compact('WeightLog', 'weight_targets', 'csvData'));
+        $weight_logs = WeightLog::all();
+        return view('log', compact('weight_logs', 'csvData'));
     }
 
     public function getId()
@@ -85,12 +99,19 @@ class WeightController extends Controller
     public function postCreate(WeightRequest $request)
     {
         $form = $request->all();
-        Author::create($form);
+        WeightTarget::create($form);
         return redirect('/weight_logs');
     }
 
     public function postGoal()
     {
+        return view('goal');
+    }
+
+    public function goal(WeightRequest $request)
+    {
+        $form = $request->all();
+        WeightTarget::create($form);
         return redirect('/weight_logs');
     }
 }

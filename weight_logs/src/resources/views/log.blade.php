@@ -31,6 +31,7 @@
       </tr>
       @endforeach
     </table>
+   <form class="search-form__keyword-input">
     <input class="search-form__date" type="date" name="date" value="{{request('date')}}">
       <span class="mx-3">~</span>
     <input class="search-form__date" type="date" name="date" value="{{request('date')}}">  

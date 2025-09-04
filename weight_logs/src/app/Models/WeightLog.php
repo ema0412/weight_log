@@ -13,8 +13,13 @@ class WeightLog extends Model
         'id',
     ];
 
-     public function WeightLog()
-     {
+    public function scopeLatestN($query, $count =10)
+    {
+        return $query->orderBy('created_at','desc')->take($count);
+    }
+
+    public function WeightLog()
+    {
         return $this->belongsTo(WeightLog::class);
-     }
+    }
 }

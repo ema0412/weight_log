@@ -13,11 +13,11 @@
 <div class="goal-form">
   <h2 class="goal-form__heading content__heading">目標体重設定</h2>
   <div class="goal-form__inner">
-    <form class="goal-form__form" action="/weight_logs" method="post">
+    <form class="goal-form__form" action="/goal" method="post">
       @csrf
     <div class="goal-form__group">
         <label class="goal-form__label" for="target_weight">目標の体重</label>
-        <input class="goal-form__input" type="text" name="trget_weight" placeholder="目標の体重を入力">
+        <input class="goal-form__input" type="text" name="target_weight" placeholder="目標の体重を入力">
         <p class="goal-form__error-message">
           @error('target_weight')
           {{ $message }}
@@ -25,7 +25,7 @@
         </p>
       </div>
       <input class="goal-form__btn btn" type="submit" value="更新">
-      <input class="confirm-form__back-btn" type="submit" value="戻る">
+      <a href="/weight_logs" class="back">戻る</a>
     </form>
   </div>
 </div>

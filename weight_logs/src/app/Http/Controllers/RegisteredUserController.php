@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -12,6 +13,8 @@ use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Contracts\RegisterViewResponse;
 use Laravel\Fortify\Fortify;
 use App\Http\Requests\RegisterRequest;
+use App\Models\WeightLog;
+use App\Models\WeightTarget;
 
 class RegisteredUserController extends Controller
 {
@@ -44,33 +47,21 @@ class RegisteredUserController extends Controller
         return app(RegisterViewResponse::class);
     }
 
-    public function weight(RegisterRequest $request)
-    {
-        $input = $request->all();
-
-        return view('auth.weight', compact('input'));
-    }
-
     /**
      * Create a new registered user.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Laravel\Fortify\Contracts\CreatesNewUsers  $creator
-     * @return \Laravel\Fortify\Contracts\RegisterResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(RegisterRequest $request, CreatesNewUsers $creator): RegisterResponse
+    public function store(RegisterRequest $request, CreatesNewUsers $creator): RedirectResponse
     {
         // ユーザー情報登録
         event(new Registered($user = $creator->create($request->all())));
 
         $this->guard->login($user);
 
-        // ユーザーの初期体重登録
-        WeightLog::create([
-            'user_id' => $user->id,
-            'weight' => $request->input('weight'),
-        ]);
-
-        return app(RegisterResponse::class);
+        return redirect('/register/step2');
+        
     }
 }

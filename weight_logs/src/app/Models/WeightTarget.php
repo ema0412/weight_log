@@ -9,7 +9,7 @@ class WeightTarget extends Model
 {
     use HasFactory;
 
-    protected $table = 'weight_target_table';
+    protected $fillable = ['target_weight'];
 
     public function WeightLog()
     {
